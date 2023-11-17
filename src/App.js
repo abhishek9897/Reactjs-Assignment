@@ -4,21 +4,18 @@ import WeekDays from './WeekDays';
 import SavedEntries from './SavesEntries';
 import "./App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+ 
 
 const App = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTimezone, setSelectedTimezone] = useState('UTC+0');
   const [weeklyWorkingDays, setWeeklyWorkingDays] = useState([]);
-  const [selectedWeekStart, setSelectedWeekStart] = useState(new Date());
   const [savedEntries, setSavedEntries] = useState([]);
 
   const changeWeek = (week) => {
     
-    const newWeekStart = new Date(selectedWeekStart);
-    console.log(newWeekStart)
+    const newWeekStart = new Date(currentDate);
     week === 'next' ? newWeekStart.setDate(newWeekStart.getDate() + 7) : newWeekStart.setDate(newWeekStart.getDate() - 7);
-    setSelectedWeekStart(newWeekStart);
     setCurrentDate(newWeekStart)
   };
 
@@ -30,18 +27,10 @@ const App = () => {
     setWeeklyWorkingDays((prevDays) => {
       const updatedDays = [...prevDays];
       updatedDays[dayIndex].workingHours[hour] = !updatedDays[dayIndex].workingHours[hour] ;
-      if (updatedDays[dayIndex].workingHours[hour]) {
-        const selectedDate = new Date(updatedDays[dayIndex].date);
-        const timeAdjustment = selectedTimezone === 'UTC+0' ? 0 : 5.5;
-    selectedDate.setHours(selectedDate.getHours() + timeAdjustment);
-
-        const selectedTime = hour;
-        console.log(`Selected Date: ${selectedDate.toLocaleDateString()}, Selected Time: ${selectedTime}`);
-      }
-
       return updatedDays;
     });
   };
+  
 
   const handleSave = () => {
     const selectedEntries = [];
@@ -71,8 +60,8 @@ const App = () => {
   useEffect(() => {
  
 
-    const startOfWeek = new Date(selectedWeekStart);
-    const endOfWeek = new Date(selectedWeekStart);
+    const startOfWeek = new Date(currentDate);
+    const endOfWeek = new Date(currentDate);
     endOfWeek.setDate(endOfWeek.getDate() + 6); 
 
     const workingDays = [];
@@ -101,7 +90,7 @@ const App = () => {
       });
     }
     setWeeklyWorkingDays(workingDays);
-  }, [selectedWeekStart, selectedTimezone]);
+  }, [currentDate, selectedTimezone]);
 
   return (
     <div className='m-2'>
